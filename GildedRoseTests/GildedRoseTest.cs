@@ -21,50 +21,70 @@ public class GildedRoseTest
     [Fact]
     public void ItemUpdaterShouldBeDefaultItemUpdater()
     {
+        // Arrange
         const string itemName = "Any Name";
+
+        // Act
         var container = new ItemUpdaterContainer();
         var updater = container.GetInstanceFor(itemName);
 
+        // Assert
         Assert.IsType<ItemUpdater>(updater);
     }
 
     [Fact]
     public void ItemUpdaterShouldBeAgedBrieItemUpdater() 
     {
+        // Arrange
         const string itemName = "aged brie";
+
+        // Act
         var container = new ItemUpdaterContainer();
         var updater = container.GetInstanceFor(itemName);
 
+        // Assert
         Assert.IsType<AgedBrieItemUpdater>(updater);
     }
 
     [Fact]
     public void ItemUpdaterShouldBeSulfurasItemUpdater() 
     {
+        // Arrange
         const string itemName = "sulfuras...";
+
+        // Act
         var container = new ItemUpdaterContainer();
         var updater = container.GetInstanceFor(itemName);
 
+        // Assert
         Assert.IsType<SulfurasItemUpdater>(updater);
     }
 
     [Fact]
     public void ItemUpdaterShouldBeBackstagePassesItemUpdater() 
     {
+        // Arrange
         const string itemName = "backstage passes...";
+
+        // Act
         var container = new ItemUpdaterContainer();
         var updater = container.GetInstanceFor(itemName);
 
+        // Assert
         Assert.IsType<BackstagePassesItemUpdater>(updater);
     }
 
     [Fact]
     public void ItemUpdaterShouldBeConjuredItemUpdater() 
     {
+        // Arrange
         const string itemName = "conjured...";
+
+        // Act
         var container = new ItemUpdaterContainer();
         var updater = container.GetInstanceFor(itemName);
 
+        // Assert
         Assert.IsType<ConjuredItemUpdater>(updater);
     }
 
@@ -90,6 +110,10 @@ public class GildedRoseTest
 
         // Assert
         Assert.IsType<ItemUpdater>(updater);
+        //Once the sell by date has passed, Quality degrades twice as fast,
+        //so the loop ends 1 day after the sell by date, getting 2 points,
+        //which added to the other 2 points obtained in the 2 days before the sell by date,
+        //resulting in 4 points. 20 - 4 = 16.
         Assert.Equal(item.Quality, 16);
     }
 
@@ -115,6 +139,8 @@ public class GildedRoseTest
 
         // Assert
         Assert.IsType<AgedBrieItemUpdater>(updater);
+        //The Quality increases its value twice as fast when the sale date has passed, 
+        //so 3 days after the sale 2 x 3 days = 6, 6 + 2 points got before sell by date = 8.
         Assert.Equal(8, item.Quality);
     }
 
@@ -141,6 +167,7 @@ public class GildedRoseTest
 
         // Assert
         Assert.IsType<SulfurasItemUpdater>(updater);
+        //No matter the number of days, the Quality should not change.
         Assert.Equal(quality, item.Quality);
     }
 
@@ -166,11 +193,12 @@ public class GildedRoseTest
 
         // Assert
         Assert.IsType<BackstagePassesItemUpdater>(updater);
+        //The Quality should be zero after the concert.
         Assert.Equal(0, item.Quality);
     }
 
     [Fact]
-    public void ConjuredItemUpdaterShouldReturnQualityOfZero()
+    public void ConjuredItemUpdaterShouldReturnQualityOfFour()
     {
         // Arrange
         var item = new Item
@@ -191,6 +219,7 @@ public class GildedRoseTest
 
         // Assert
         Assert.IsType<ConjuredItemUpdater>(updater);
+        //The Quality should decrease by 2, so after 3 days, its value should be 4.
         Assert.Equal(4, item.Quality);
     }
 
@@ -204,6 +233,7 @@ public class GildedRoseTest
         var container = new ItemUpdaterContainer();
 
         // Assert
+        //ArgumentException will be thrown if the value of the item's name is null, empty or a white-space.
         Assert.Throws<ArgumentException>(() => container.GetInstanceFor(itemName));
     }
 }
